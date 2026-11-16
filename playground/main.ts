@@ -92,8 +92,7 @@ function renderDocs() {
   }
 }
 
-function showPage(next: SitePage, updateHistory = true) {
-  page = next
+function applyPageVisibility(next: SitePage) {
   document.body.dataset.page = next
   document.querySelectorAll<HTMLElement>('.page-panel').forEach(panel => {
     panel.hidden = panel.id !== `page-${next}`
@@ -101,11 +100,17 @@ function showPage(next: SitePage, updateHistory = true) {
   document.querySelectorAll<HTMLAnchorElement>('[data-page]').forEach(link => {
     link.classList.toggle('active', link.dataset.page === next)
   })
+}
+
+function showPage(next: SitePage, updateHistory = true) {
+  page = next
+  applyPageVisibility(next)
   if (next === 'home') mount(active, demoMode, false)
   else {
     cleanup?.()
     cleanup = undefined
     delete (window as unknown as { board?: Drawboard }).board
+    document.body.classList.remove('infinite-mode')
     if (next === 'start') renderStart(startFramework)
     if (next === 'docs') renderDocs()
   }
@@ -153,13 +158,7 @@ function syncFromLocation(updateHistory = false) {
   const mode = params.get('mode') === 'infinite' ? 'infinite' : 'document'
   if (next === 'home') {
     page = 'home'
-    document.body.dataset.page = 'home'
-    document.querySelectorAll<HTMLElement>('.page-panel').forEach(panel => {
-      panel.hidden = panel.id !== 'page-home'
-    })
-    document.querySelectorAll<HTMLAnchorElement>('[data-page]').forEach(link => {
-      link.classList.toggle('active', link.dataset.page === 'home')
-    })
+    applyPageVisibility('home')
     mount(active, mode, updateHistory)
   } else showPage(next, updateHistory)
 }

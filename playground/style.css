@@ -30,6 +30,10 @@ body[data-page=home] {
     flex-direction: column
 }
 
+.page-panel[hidden] {
+    display: none !important
+}
+
 a {
     color: inherit
 }
