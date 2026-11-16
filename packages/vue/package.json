@@ -1,0 +1,59 @@
+{
+  "name": "@drawink/vue",
+  "version": "0.1.1",
+  "description": "Teaching drawboard and page annotations for vue",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md",
+    "README.zh-CN.md"
+  ],
+  "sideEffects": false,
+  "license": "MIT",
+  "author": "Jacky010",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jacky010/drawink.git",
+    "directory": "packages/vue"
+  },
+  "bugs": {
+    "url": "https://github.com/Jacky010/drawink/issues"
+  },
+  "homepage": "https://jacky010.github.io/drawink/",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "drawboard",
+    "drawing",
+    "annotation",
+    "canvas",
+    "teaching",
+    "vue"
+  ],
+  "scripts": {
+    "build": "tsup"
+  },
+  "peerDependencies": {
+    "vue": ">=3.3.0"
+  },
+  "dependencies": {
+    "@drawink/core": "workspace:^"
+  }
+}

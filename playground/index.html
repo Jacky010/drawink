@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="网页内容上的教学批注画板。JavaScript、Vue 3、React 一份核心三种接入。">
+  <title>drawink · 让思路，在页面上成形</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,600;7..72,700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <header class="site-nav">
+    <a href="./" class="brand" data-page="home">drawink</a>
+    <nav class="site-nav-main" aria-label="主导航">
+      <a href="./" data-page="home">在线演示</a>
+      <a href="./?page=start" data-page="start">快速接入</a>
+      <a href="./?page=docs" data-page="docs">文档</a>
+    </nav>
+    <nav class="mast-links" aria-label="项目链接">
+      <a href="https://github.com/Jacky010/drawink" target="_blank" rel="noreferrer">GitHub</a>
+      <a href="https://www.npmjs.com/package/@drawink/core" target="_blank" rel="noreferrer">npm</a>
+    </nav>
+  </header>
+
+  <main id="page-home" class="shell page-panel">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Draw the idea. Keep the lesson.</div>
+        <h1>让思路，<br>在页面上<em>成形。</em></h1>
+      </div>
+      <p class="subtitle">网页内容上的教学批注画板。<br>从一笔手写，到一个长方体。<br>一份核心，三种接入。</p>
+    </section>
+    <nav class="tabs" aria-label="Framework">
+      <a href="./?framework=js" data-framework="js">JavaScript</a>
+      <a href="./?framework=vue" data-framework="vue">Vue 3</a>
+      <a href="./?framework=react" data-framework="react">React</a>
+      <label class="toolbar-placement">工具栏位置
+        <select id="toolbar-placement" aria-label="工具栏位置">
+          <option value="top-center">顶部居中</option>
+          <option value="top-left">左上角</option>
+          <option value="top-right">右上角</option>
+          <option value="bottom-center">底部居中</option>
+          <option value="bottom-left">左下角</option>
+          <option value="bottom-right">右下角</option>
+        </select>
+      </label>
+    </nav>
+    <section class="workspace">
+      <div class="workspace-head"><span><i class="dot"></i>LESSON 01 / 几何与空间</span></div>
+      <div class="board-wrap" id="demo"></div>
+    </section>
+    <p id="mode-help" class="mode-help"></p>
+    <div id="status" role="status"></div>
+    <section class="notes">
+      <div><b>01 / 教学几何</b>
+        <p>平面与立体，一套工具。</p>
+      </div>
+      <div><b>02 / 内容之上</b>
+        <p>保留网页，独立保存批注。</p>
+      </div>
+      <div><b>03 / 框架之外</b>
+        <p>JavaScript · Vue · React</p>
+      </div>
+    </section>
+    <div id="second"></div>
+  </main>
+
+  <main id="page-start" class="guide page-panel" hidden>
+    <section class="guide-hero">
+      <p class="guide-kicker">QUICK START</p>
+      <h2>几行代码，开始接入</h2>
+      <p>三个包共用数据格式与工具名。按技术栈安装对应包即可。</p>
+    </section>
+    <nav class="tabs guide-tabs" aria-label="接入技术栈">
+      <button type="button" data-start-framework="js" class="active">JavaScript</button>
+      <button type="button" data-start-framework="vue">Vue 3</button>
+      <button type="button" data-start-framework="react">React</button>
+    </nav>
+    <section class="guide-grid">
+      <article class="guide-card">
+        <div class="guide-card-head">
+          <h3>安装</h3>
+          <button type="button" id="copy-install" class="copy-btn">复制</button>
+        </div>
+        <pre><code id="install-command"></code></pre>
+      </article>
+      <article class="guide-card guide-card-wide">
+        <div class="guide-card-head">
+          <h3>最小示例</h3>
+          <button type="button" id="copy-sample" class="copy-btn">复制</button>
+        </div>
+        <pre><code id="integrate-sample"></code></pre>
+      </article>
+    </section>
+    <section class="guide-points">
+      <div>
+        <b>同一数据格式</b>
+        <p><code>getData</code> / <code>loadData</code> / <code>v-model:data</code> / 受控 <code>data</code> 互通。</p>
+      </div>
+      <div>
+        <b>容器要有高度</b>
+        <p>请给宿主明确宽高；无限模式通常用空白容器。</p>
+      </div>
+      <div>
+        <b>无需另引 CSS</b>
+        <p>工具栏样式由库注入；销毁或卸载会清理实例。</p>
+      </div>
+    </section>
+    <p class="guide-more">完整 API、工具扩展与边界说明见 <a href="./?page=docs" data-page="docs">文档</a>，或阅读 GitHub 上的 <a href="https://github.com/Jacky010/drawink/blob/master/README.zh-CN.md" target="_blank" rel="noreferrer">README.zh-CN.md</a>。</p>
+  </main>
+
+  <main id="page-docs" class="guide page-panel" hidden>
+    <section class="guide-hero">
+      <p class="guide-kicker">DOCS</p>
+      <h2>使用文档</h2>
+      <p>下面是最常用的能力摘要。更细的配置表、方法列表与边界说明，见仓库完整文档。</p>
+    </section>
+    <div class="docs-layout">
+      <aside class="docs-toc" aria-label="文档目录"></aside>
+      <div class="docs-body"></div>
+    </div>
+    <p class="guide-more">
+      完整中文文档：<a href="https://github.com/Jacky010/drawink/blob/master/README.zh-CN.md" target="_blank" rel="noreferrer">README.zh-CN.md</a>
+      · English：<a href="https://github.com/Jacky010/drawink/blob/master/README.md" target="_blank" rel="noreferrer">README.md</a>
+      · npm：
+      <a href="https://www.npmjs.com/package/@drawink/core" target="_blank" rel="noreferrer">@drawink/core</a> /
+      <a href="https://www.npmjs.com/package/@drawink/vue" target="_blank" rel="noreferrer">@drawink/vue</a> /
+      <a href="https://www.npmjs.com/package/@drawink/react" target="_blank" rel="noreferrer">@drawink/react</a>
+    </p>
+  </main>
+
+  <script type="module" src="/main.ts"></script>
+</body>
+
+</html>
