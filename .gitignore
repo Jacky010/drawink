@@ -1,5 +1,6 @@
 node_modules/
 docs/
+output/
 artifacts/
 dist/
 site-dist/

@@ -8,6 +8,13 @@ drawink 是一个面向网页板书、教学几何和内容批注的画板库。
 
 [English](./README.md) · [MIT 许可证](./LICENSE)
 
+### 完整功能介绍
+
+<video src="./media/drawink-intro.mp4" controls width="100%" playsinline>
+  本地预览或 GitHub 上可直接播放；若无法内嵌，请打开
+  <a href="./media/drawink-intro.mp4">drawink 完整功能介绍.mp4</a>。
+</video>
+
 ## 目录
 
 - [功能与适用场景](#功能与适用场景)

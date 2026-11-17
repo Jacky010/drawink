@@ -8,6 +8,13 @@ drawink is a Canvas 2D drawing and annotation library for teaching, geometry dem
 
 [简体中文完整文档](./README.zh-CN.md) · [MIT License](./LICENSE)
 
+### Feature walkthrough
+
+<video src="./media/drawink-intro.mp4" controls width="100%" playsinline>
+  Play inline on GitHub or locally. If the player is unavailable, open
+  <a href="./media/drawink-intro.mp4">drawink-intro.mp4</a>.
+</video>
+
 ## Contents
 
 - [Features](#features)
