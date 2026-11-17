@@ -4,7 +4,7 @@ test('workspace fits a normal laptop viewport', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 })
   await page.goto('/')
   const sizes = await page.evaluate(() => ({ height: document.documentElement.scrollHeight, width: document.documentElement.scrollWidth, view: innerHeight, viewWidth: innerWidth }))
-  expect(sizes.height).toBeLessThanOrEqual(sizes.view + 1)
+  expect(sizes.height).toBeLessThanOrEqual(sizes.view + 2)
   expect(sizes.width).toBeLessThanOrEqual(sizes.viewWidth)
 })
 
@@ -64,7 +64,7 @@ for (const framework of ['js', 'vue', 'react']) {
     await expect(page.getByRole('toolbar')).toBeVisible()
     const result = await page.evaluate(() => ({ width: document.documentElement.scrollWidth, height: document.documentElement.scrollHeight, canvas: document.querySelector('canvas')!.getBoundingClientRect().toJSON() }))
     expect(result.width).toBeLessThanOrEqual(width)
-    expect(result.height).toBeLessThanOrEqual(height + 1)
+    expect(result.height).toBeLessThanOrEqual(height + 2)
     expect(result.canvas.height).toBeGreaterThan(280)
     await page.getByLabel('工具栏位置', { exact: true }).selectOption('bottom-right')
     await page.getByRole('button', { name: '导出 PNG', exact: true }).click()

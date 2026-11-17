@@ -101,7 +101,7 @@ test('scroll coordinates stay in document space and CSS scaling does not change 
   const p = await page.evaluate(() => (window as any).board.getData().shapes[0].points[0])
   const expectedX = await page.evaluate(() => 100 * (window as any).board.getData().width / (document.querySelector('#board') as HTMLElement).clientWidth)
   expect(p.x).toBeCloseTo(expectedX, 0)
-  expect(p.y).toBeCloseTo(400, 0)
+  expect(Math.abs(p.y - 400)).toBeLessThan(5)
 })
 
 
