@@ -10,10 +10,11 @@ drawink 是一个面向网页板书、教学几何和内容批注的画板库。
 
 ### 完整功能介绍
 
-<video src="./media/drawink-intro.mp4" controls width="100%" playsinline>
-  本地预览或 GitHub 上可直接播放；若无法内嵌，请打开
-  <a href="./media/drawink-intro.mp4">drawink 完整功能介绍.mp4</a>。
-</video>
+GitHub README 无法直接内嵌仓库里的 mp4，点击封面即可在官网观看：
+
+[![drawink 完整功能介绍](./media/drawink-intro-poster.jpg)](https://jacky010.github.io/drawink/?page=start#intro-video)
+
+[在线观看](https://jacky010.github.io/drawink/?page=start#intro-video) · [下载视频](./media/drawink-intro.mp4)
 
 ## 目录
 

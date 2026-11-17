@@ -160,7 +160,12 @@ function syncFromLocation(updateHistory = false) {
     page = 'home'
     applyPageVisibility('home')
     mount(active, mode, updateHistory)
-  } else showPage(next, updateHistory)
+  } else {
+    showPage(next, updateHistory)
+    if (next === 'start' && location.hash === '#intro-video') {
+      queueMicrotask(() => document.querySelector('#intro-video')?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+    }
+  }
 }
 
 setModeHandler(mode => mount(active, mode))

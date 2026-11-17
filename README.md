@@ -10,10 +10,11 @@ drawink is a Canvas 2D drawing and annotation library for teaching, geometry dem
 
 ### Feature walkthrough
 
-<video src="./media/drawink-intro.mp4" controls width="100%" playsinline>
-  Play inline on GitHub or locally. If the player is unavailable, open
-  <a href="./media/drawink-intro.mp4">drawink-intro.mp4</a>.
-</video>
+GitHub README cannot embed repository mp4 files inline. Click the poster to watch on the website:
+
+[![drawink feature walkthrough](./media/drawink-intro-poster.jpg)](https://jacky010.github.io/drawink/?page=start#intro-video)
+
+[Watch online](https://jacky010.github.io/drawink/?page=start#intro-video) · [Download MP4](./media/drawink-intro.mp4)
 
 ## Contents
 
