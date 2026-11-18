@@ -66,6 +66,37 @@ test('object eraser, selection move, and disable are independent of rendering', 
   await drag(page)
   expect(await count(page)).toBe(0)
 })
+test('selection resize handles scale the selected object', async ({ page }) => {
+  await page.evaluate(() => {
+    const board = (window as any).board
+    board.loadData({
+      version: 1, width: 800, height: 1200,
+      shapes: [{ tool: 'rect', points: [{ x: 100, y: 100 }, { x: 200, y: 180 }], color: '#176b52', width: 3 }],
+    })
+    board.setTool('select')
+  })
+  const handle = await page.evaluate(() => {
+    const canvas = document.querySelector('#board canvas') as HTMLCanvasElement
+    const rect = canvas.getBoundingClientRect()
+    const data = (window as any).board.getData()
+    const shape = data.shapes[0]
+    const pad = shape.width / 2
+    const se = { x: 200 + pad, y: 180 + pad }
+    const toClient = (x: number, y: number) => ({
+      x: rect.left + x * rect.width / data.width,
+      y: rect.top + y * rect.height / data.height,
+    })
+    return { center: toClient(150, 140), se: toClient(se.x, se.y), end: toClient(300, 280) }
+  })
+  await page.mouse.click(handle.center.x, handle.center.y)
+  await page.mouse.move(handle.se.x, handle.se.y)
+  await page.mouse.down()
+  await page.mouse.move(handle.end.x, handle.end.y, { steps: 8 })
+  await page.mouse.up()
+  const points = await page.evaluate(() => (window as any).board.getData().shapes[0].points)
+  expect(points[1].x).toBeGreaterThan(280)
+  expect(points[1].y).toBeGreaterThan(260)
+})
 test('two instances isolate history and destroying restores the host', async ({ page }) => {
   const result = await page.evaluate(() => {
     const host = document.querySelector('#second') as HTMLElement

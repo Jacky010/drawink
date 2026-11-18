@@ -1,5 +1,5 @@
 import type { Bounds, Point, Shape, CustomShapeDefinition } from './types'
-import { shapeBounds } from './model'
+import { resizeHandles, shapeBounds } from './model'
 
 function poly(ctx: CanvasRenderingContext2D, points: number[][], close = true) {
   ctx.moveTo(points[0][0], points[0][1])
@@ -81,12 +81,22 @@ export function drawShape(ctx: CanvasRenderingContext2D, shape: Shape, custom?: 
 }
 
 /** Render selection without inserting it into the portable document. */
-export function drawSelection(ctx: CanvasRenderingContext2D, bounds: Bounds, color = '#176b52') {
+export function drawSelection(ctx: CanvasRenderingContext2D, bounds: Bounds, color = '#176b52', handleSize = 0) {
   ctx.save()
   ctx.strokeStyle = color
   ctx.lineWidth = 1
   ctx.setLineDash([5, 4])
   ctx.strokeRect(bounds.x, bounds.y, bounds.width, bounds.height)
+  if (handleSize > 0) {
+    ctx.setLineDash([])
+    ctx.fillStyle = '#ffffff'
+    for (const point of Object.values(resizeHandles(bounds))) {
+      const x = point.x - handleSize / 2
+      const y = point.y - handleSize / 2
+      ctx.fillRect(x, y, handleSize, handleSize)
+      ctx.strokeRect(x, y, handleSize, handleSize)
+    }
+  }
   ctx.restore()
 }
 

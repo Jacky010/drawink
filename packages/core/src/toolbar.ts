@@ -12,7 +12,7 @@ export const toolLabels: Record<Tool, string> = {
   pen: '画笔', line: '直线', rect: '矩形', circle: '圆', ellipse: '椭圆',
   triangle: '三角形', diamond: '菱形', trapezoid: '梯形', parallelogram: '平行四边形',
   cuboid: '长方体', cylinder: '圆柱', cone: '圆锥',
-  eraser: '对象擦除', select: '移动对象', pan: '滚动',
+  eraser: '对象擦除', select: '选择对象', pan: '滚动',
 }
 interface ToolbarActions extends DrawboardHandle {}
 /** Compact floating toolbar with grouped shapes and declarative user actions. */

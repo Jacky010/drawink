@@ -2,7 +2,7 @@ import { positionToolbar, validateToolbarPosition } from './toolbarPosition'
 import { MIN_ZOOM, MAX_ZOOM, WORLD_LIMIT, camera, clamp, validateZoom } from './view'
 import { validateToolbarIcon } from './toolbarIcon'
 import { applyBackground, backgroundProperties, cloneBackground, paintBackground, resolveBackground, validateBackground } from './background'
-import { cloneShapes, History, intersects, moveShape, parseData, shapeBounds } from './model'
+import { cloneShapes, geometryBounds, History, hitResizeHandle, intersects, moveShape, parseData, resizeBounds, resizeShape, shapeBounds, type ResizeHandle } from './model'
 import { drawSelection, drawShape } from './renderer'
 import { createToolbar } from './toolbar'
 import { shapeTools, type BrushSettings, type Viewport, type BackgroundSettings, type CustomShapeDefinition, type BoardMode, type Bounds, type DrawboardOptions, type DrawingData, type ExportImageOptions, type Point, type Shape, type Tool } from './types'
@@ -24,6 +24,8 @@ interface Gesture {
   scrollY: number
   viewport: Point
   pointer: Point
+  resize?: ResizeHandle
+  startBounds?: Bounds
 }
 function rectangle(a: Point, b: Point): Bounds {
   return { x: Math.min(a.x, b.x), y: Math.min(a.y, b.y), width: Math.abs(a.x - b.x), height: Math.abs(a.y - b.y) }
@@ -365,8 +367,20 @@ export class Drawboard {
       drawSelection(this.context, rectangle(this.gesture.start, this.gesture.last), '#b54b37')
     }
     if (this.selected >= 0 && this.shapes[this.selected]) {
-      drawSelection(this.context, shapeBounds(this.shapes[this.selected]))
+      const handles = !this.locked && this.options.tool === 'select' ? this.handleSize() : 0
+      drawSelection(this.context, shapeBounds(this.shapes[this.selected]), '#176b52', handles)
     }
+  }
+  private worldPixel() {
+    const rect = this.canvas.getBoundingClientRect()
+    const span = this.mode === 'infinite' ? this.viewWidth / this.zoom : this.width
+    return span / Math.max(1, rect.width)
+  }
+  private handleSize() {
+    return Math.max(3, 8 * this.worldPixel())
+  }
+  private handleRadius() {
+    return Math.max(4, 8 * this.worldPixel())
   }
   private restoreBackground() {
     for (const property of backgroundProperties) this.container.style.setProperty(property, this.savedBackground[property])
@@ -412,10 +426,23 @@ export class Drawboard {
       }
       if (this.options.tool !== 'pen') this.gesture.draft.points.push(p)
     }
-    if (!this.locked && this.options.tool === 'select') this.selectAt(p)
+    if (!this.locked && this.options.tool === 'select') this.beginSelect(p)
     try { this.canvas.setPointerCapture(event.pointerId) } catch { /* Synthetic or already ended pointer. */ }
     this.edgeFrame = this.win.requestAnimationFrame(this.edgePan)
     this.schedule()
+  }
+  private beginSelect(point: Point) {
+    if (this.selected >= 0 && this.shapes[this.selected]) {
+      const bounds = shapeBounds(this.shapes[this.selected])
+      const handle = hitResizeHandle(point, bounds, this.handleRadius())
+      if (handle) {
+        this.gesture!.index = this.selected
+        this.gesture!.resize = handle
+        this.gesture!.startBounds = bounds
+        return
+      }
+    }
+    this.selectAt(point)
   }
   private selectAt(point: Point) {
     this.selected = -1
@@ -446,7 +473,24 @@ export class Drawboard {
       else gesture.draft.points[1] = p
     }
     if (gesture.index >= 0) {
-      this.shapes[gesture.index] = moveShape(gesture.before[gesture.index], p.x - gesture.start.x, p.y - gesture.start.y)
+      const original = gesture.before[gesture.index]
+      if (gesture.resize && gesture.startBounds) {
+        const pad = original.width / 2
+        const next = resizeBounds(
+          gesture.startBounds, gesture.resize, p,
+          Math.max(4, original.width + 2), original.tool === 'circle',
+        )
+        const from = geometryBounds(original)
+        const to = {
+          x: next.x + pad,
+          y: next.y + pad,
+          width: Math.max(0, next.width - pad * 2),
+          height: Math.max(0, next.height - pad * 2),
+        }
+        this.shapes[gesture.index] = resizeShape(original, from, to)
+      } else {
+        this.shapes[gesture.index] = moveShape(original, p.x - gesture.start.x, p.y - gesture.start.y)
+      }
     }
   }
   /** Advance the camera continuously while drawing or moving against an edge. */

@@ -1,6 +1,10 @@
 import { CAMERA_LIMIT, WORLD_LIMIT, validateZoom } from './view'
 import { validateBackground, cloneBackground } from './background'
-import { shapeTools, type Bounds, type DrawingData, type Shape } from './types'
+import { shapeTools, type Bounds, type DrawingData, type Point, type Shape } from './types'
+
+export type ResizeHandle = 'nw' | 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w'
+const handleOrder: ResizeHandle[] = ['nw', 'ne', 'se', 'sw', 'n', 'e', 's', 'w']
+const finiteCoord = (n: number) => Math.max(-WORLD_LIMIT, Math.min(WORLD_LIMIT, n))
 
 const positive = (n: unknown): n is number =>
   typeof n === 'number' && Number.isFinite(n) && n > 0 && n <= 32768
@@ -64,8 +68,8 @@ export function moveShape(shape: Shape, dx: number, dy: number): Shape {
   return { ...shape, points: shape.points.map(p => ({ x: p.x + dx, y: p.y + dy })) }
 }
 
-/** Visible shape bounds, including stroke thickness. Circle uses the longer drag edge. */
-export function shapeBounds(shape: Shape): Bounds {
+/** Geometry bounds without stroke padding. Circle uses the longer drag edge. */
+export function geometryBounds(shape: Shape): Bounds {
   let x = Infinity
   let y = Infinity
   let right = -Infinity
@@ -85,8 +89,112 @@ export function shapeBounds(shape: Shape): Bounds {
     y = b.y < a.y ? a.y - size : a.y
     width = height = size
   }
+  return { x, y, width, height }
+}
+
+/** Visible shape bounds, including stroke thickness. Circle uses the longer drag edge. */
+export function shapeBounds(shape: Shape): Bounds {
+  const box = geometryBounds(shape)
   const pad = shape.width / 2
-  return { x: x - pad, y: y - pad, width: width + pad * 2, height: height + pad * 2 }
+  return { x: box.x - pad, y: box.y - pad, width: box.width + pad * 2, height: box.height + pad * 2 }
+}
+
+/** Eight selection handles on a bounding box, corners first for hit-testing. */
+export function resizeHandles(bounds: Bounds): Record<ResizeHandle, Point> {
+  const mx = bounds.x + bounds.width / 2
+  const my = bounds.y + bounds.height / 2
+  return {
+    nw: { x: bounds.x, y: bounds.y },
+    n: { x: mx, y: bounds.y },
+    ne: { x: bounds.x + bounds.width, y: bounds.y },
+    e: { x: bounds.x + bounds.width, y: my },
+    se: { x: bounds.x + bounds.width, y: bounds.y + bounds.height },
+    s: { x: mx, y: bounds.y + bounds.height },
+    sw: { x: bounds.x, y: bounds.y + bounds.height },
+    w: { x: bounds.x, y: my },
+  }
+}
+
+/** Hit-test selection handles in world space. */
+export function hitResizeHandle(point: Point, bounds: Bounds, radius: number): ResizeHandle | null {
+  if (!(radius > 0) || !(bounds.width >= 0) || !(bounds.height >= 0)) return null
+  const handles = resizeHandles(bounds)
+  for (const id of handleOrder) {
+    const handle = handles[id]
+    if (Math.abs(point.x - handle.x) <= radius && Math.abs(point.y - handle.y) <= radius) return id
+  }
+  return null
+}
+
+/** Adjust a box from the active handle while keeping a minimum size. */
+export function resizeBounds(bounds: Bounds, handle: ResizeHandle, point: Point, minSize = 4, lockRatio = false): Bounds {
+  let left = bounds.x
+  let top = bounds.y
+  let right = bounds.x + bounds.width
+  let bottom = bounds.y + bounds.height
+  const moveX = handle === 'nw' || handle === 'w' || handle === 'sw'
+  const moveY = handle === 'nw' || handle === 'n' || handle === 'ne'
+  const growX = handle === 'ne' || handle === 'e' || handle === 'se'
+  const growY = handle === 'se' || handle === 's' || handle === 'sw'
+  if (moveX) left = point.x
+  if (growX) right = point.x
+  if (moveY) top = point.y
+  if (growY) bottom = point.y
+  if (right < left + minSize) {
+    if (moveX) left = right - minSize
+    else right = left + minSize
+  }
+  if (bottom < top + minSize) {
+    if (moveY) top = bottom - minSize
+    else bottom = top + minSize
+  }
+  let width = right - left
+  let height = bottom - top
+  if (lockRatio) {
+    const size = Math.max(width, height, minSize)
+    if (moveX) left = right - size
+    else if (growX) right = left + size
+    else {
+      const mid = (left + right) / 2
+      left = mid - size / 2
+      right = mid + size / 2
+    }
+    if (moveY) top = bottom - size
+    else if (growY) bottom = top + size
+    else {
+      const mid = (top + bottom) / 2
+      top = mid - size / 2
+      bottom = mid + size / 2
+    }
+    width = height = size
+  }
+  left = finiteCoord(left)
+  top = finiteCoord(top)
+  right = finiteCoord(right)
+  bottom = finiteCoord(bottom)
+  return { x: left, y: top, width: Math.max(minSize, right - left), height: Math.max(minSize, bottom - top) }
+}
+
+/** Scale shape geometry into a new box without mutating the source. */
+export function resizeShape(shape: Shape, from: Bounds, to: Bounds): Shape {
+  if (shape.tool !== 'pen') {
+    return {
+      ...shape,
+      points: [
+        { x: finiteCoord(to.x), y: finiteCoord(to.y) },
+        { x: finiteCoord(to.x + to.width), y: finiteCoord(to.y + to.height) },
+      ],
+    }
+  }
+  const sx = from.width === 0 ? 1 : to.width / from.width
+  const sy = from.height === 0 ? 1 : to.height / from.height
+  return {
+    ...shape,
+    points: shape.points.map(point => ({
+      x: finiteCoord(from.width === 0 ? to.x : to.x + (point.x - from.x) * sx),
+      y: finiteCoord(from.height === 0 ? to.y : to.y + (point.y - from.y) * sy),
+    })),
+  }
 }
 
 /** Inclusive bounding-box intersection used by object erasing and selection. */
