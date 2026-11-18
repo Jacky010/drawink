@@ -1,6 +1,6 @@
 {
   "name": "@drawink/vue",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Teaching drawboard and page annotations for vue",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -54,6 +54,6 @@
     "vue": ">=3.3.0"
   },
   "dependencies": {
-    "@drawink/core": "workspace:^"
+    "@drawink/core": "^0.2.1"
   }
 }
