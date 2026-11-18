@@ -21,7 +21,7 @@ test('built-in toolbar icons accept images, safe inline SVG and font classes', a
   await expect(pan.locator('script,foreignObject')).toHaveCount(0)
   expect(await pan.locator('path').getAttribute('onload')).toBeNull()
   expect(await page.evaluate(() => (window as any).iconXss)).toBeUndefined()
-  const font = page.getByRole('button', { name: '移动对象', exact: true }).locator('.test-iconfont')
+  const font = page.getByRole('button', { name: '选择对象', exact: true }).locator('.test-iconfont')
   await expect(font).toHaveCount(1)
   expect(await font.evaluate(el => getComputedStyle(el, '::before').content)).toBe('"X"')
   await expect(page.getByRole('button', { name: '背景', exact: true }).locator('img')).toHaveCount(1)
