@@ -3,7 +3,7 @@ test('toolbar exposes primary tools and groups geometry in a shapes popover', as
   await page.goto('/')
   const toolbar = page.getByRole('toolbar', { name: '画板工具栏' })
   await expect(toolbar).toBeVisible()
-  for (const name of ['画笔', '对象擦除', '移动对象', '滚动', '形状']) {
+  for (const name of ['画笔', '对象擦除', '选择对象', '滚动', '形状']) {
     await expect(toolbar.getByRole('button', { name, exact: true })).toBeVisible()
   }
   await expect(toolbar.getByLabel('画板模式', { exact: true })).toHaveValue('document')

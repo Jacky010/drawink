@@ -46,7 +46,7 @@ GitHub README cannot embed repository mp4 files inline. Click the poster to watc
 | Page annotations | Keep existing host DOM and draw on a separate transparent layer |
 | Teaching geometry | Plane shapes and cuboid/cylinder/cone tools with dashed construction edges |
 | Freehand drawing | Brush color, width and opacity |
-| Object editing | Bounding-box selection/movement, object erasing, clear, undo and redo |
+| Object editing | Bounding-box selection, move and resize, object erasing, clear, undo and redo |
 | Two modes | Finite document annotation or an infinite world with pan and zoom |
 | Portable documents | Versioned JSON independent of frameworks and backend services |
 | Image output | PNG Data URL or Blob, with optional board background |
@@ -252,11 +252,11 @@ Zoom ranges from `0.00001` to `8` (`0.001%–800%`). Camera changes do not rewri
 | `cuboid` | Cuboid |
 | `cylinder` | Cylinder |
 | `cone` | Cone |
-| `select` | Move the topmost matching bounding-box object |
+| `select` | Select, move, and resize the topmost matching bounding-box object |
 | `eraser` | Remove objects intersecting a dragged rectangle |
 | `pan` | Scroll the document or pan the infinite camera |
 
-The eraser removes whole objects, not pixels. Selection does not currently provide resize handles, rotation or grouping.
+The eraser removes whole objects, not pixels. Selection provides corner and edge resize handles. Rotation and multi-object grouping are not currently provided.
 
 ```ts
 board.setTool('pen')
@@ -521,7 +521,7 @@ Definitions are instance-local. JSON stores their IDs, not functions; register m
 
 Logical dimensions and stroke widths are limited to 32768. Shape points are bounded to ±1,000,000,000,000,000 and camera positions to ±1,000,000,000. Generated coordinates are constrained so documents can round-trip. Interactive bitmaps use an approximately 32-million-pixel budget and at most 2x device pixel ratio.
 
-Rendering currently traverses the scene. History stores full state snapshots; `historyLimit` is a count, not a byte budget. Very large stroke collections, mobile WebViews and actual pen hardware need target-device validation. Spatial indexing, stroke compression, chunk storage, object resize/rotation and collaboration are not currently provided.
+Rendering currently traverses the scene. History stores full state snapshots; `historyLimit` is a count, not a byte budget. Very large stroke collections, mobile WebViews and actual pen hardware need target-device validation. Spatial indexing, stroke compression, chunk storage, object rotation and collaboration are not currently provided.
 
 ## Repository and development checks
 

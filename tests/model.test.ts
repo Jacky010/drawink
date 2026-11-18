@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { History, parseData, moveShape, intersects, shapeBounds } from '../packages/core/src/model'
+import { History, parseData, moveShape, intersects, shapeBounds, hitResizeHandle, resizeBounds, resizeShape, geometryBounds } from '../packages/core/src/model'
 const shape = { tool: 'rect' as const, points: [{ x: 10, y: 20 }, { x: 110, y: 80 }], color: '#f00', width: 3 }
 const data = { version: 1 as const, width: 800, height: 600, shapes: [shape] }
 describe('portable lesson drawing data', () => {
@@ -26,6 +26,22 @@ describe('portable lesson drawing data', () => {
   it('uses the visible bounds of a reverse-drawn circle', () => {
     const bounds = shapeBounds({ ...shape, tool: 'circle', points: [{ x: 100, y: 100 }, { x: 50, y: 80 }] })
     expect(bounds).toEqual({ x: 48.5, y: 48.5, width: 53, height: 53 })
+  })
+  it('resizes shapes from selection handles without mutating the source', () => {
+    const bounds = shapeBounds(shape)
+    expect(hitResizeHandle({ x: bounds.x + bounds.width, y: bounds.y + bounds.height }, bounds, 4)).toBe('se')
+    expect(hitResizeHandle({ x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 }, bounds, 4)).toBeNull()
+    const next = resizeBounds(bounds, 'se', { x: bounds.x + bounds.width + 40, y: bounds.y + bounds.height + 20 }, 4)
+    const resized = resizeShape(shape, geometryBounds(shape), {
+      x: next.x + shape.width / 2,
+      y: next.y + shape.width / 2,
+      width: next.width - shape.width,
+      height: next.height - shape.width,
+    })
+    expect(resized.points).toEqual([{ x: 10, y: 20 }, { x: 150, y: 100 }])
+    expect(shape.points[1]).toEqual({ x: 110, y: 80 })
+    const square = resizeBounds(bounds, 'e', { x: bounds.x + 200, y: bounds.y }, 4, true)
+    expect(square.width).toBe(square.height)
   })
   it('erases objects whose bounds intersect the selection', () => {
     expect(intersects(shapeBounds(shape), { x: 109, y: 79, width: 10, height: 10 })).toBe(true)
