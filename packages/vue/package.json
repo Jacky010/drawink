@@ -54,6 +54,6 @@
     "vue": ">=3.3.0"
   },
   "dependencies": {
-    "@drawink/core": "^0.2.1"
+    "@drawink/core": "workspace:^"
   }
 }
