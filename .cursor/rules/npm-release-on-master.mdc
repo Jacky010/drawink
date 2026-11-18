@@ -1,0 +1,21 @@
+---
+description: Always ship a changeset so master merges publish to npm
+alwaysApply: true
+---
+
+# npm release on master
+
+Any user-facing or publishable change that will merge to `master` **must** include a Changeset in the same PR (or a follow-up PR before expecting npm to update).
+
+## Required workflow
+
+1. Add `.changeset/*.md` via `pnpm changeset` (or an equivalent markdown file).
+2. Bump all three fixed packages together: `@drawink/core`, `@drawink/vue`, `@drawink/react`.
+3. Prefer `minor` for new capabilities, `patch` for fixes/docs-only publishable tweaks, `major` only for breaking API changes.
+4. After the feature/fix merges to `master`, the Release workflow opens a **Version Packages** PR — merge that PR so `pnpm release` publishes to npm.
+5. Do **not** tell the user npm will update until a changeset exists (or the Version Packages PR is ready to merge).
+
+## Do not
+
+- Merge publishable work to `master` without a changeset and then say “just wait for npm”.
+- Publish only one of the three `@drawink/*` packages in isolation.
