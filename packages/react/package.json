@@ -1,6 +1,6 @@
 {
   "name": "@drawink/react",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Teaching drawboard and page annotations for react",
   "type": "module",
   "main": "./dist/index.cjs",

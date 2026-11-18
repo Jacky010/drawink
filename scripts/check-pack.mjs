@@ -8,6 +8,8 @@ import { createRequire } from 'node:module'
 
 const output = resolve('artifacts')
 mkdirSync(output, { recursive: true })
+const coreVersion = JSON.parse(readFileSync(resolve('packages/core/package.json'), 'utf8').replace(/^\uFEFF/, '')).version
+const coreRange = '^' + coreVersion
 
 function entries(path) {
   const tar = gunzipSync(readFileSync(path))
@@ -43,7 +45,7 @@ for (const folder of ['core', 'vue', 'react']) {
     assert.ok(files.has('package/' + doc), pkg.name + ' missing ' + doc)
     assert.doesNotMatch(files.get('package/' + doc).toString(), /npm\s+(?:publish|login|adduser)|AGPL/i)
   }
-  if (folder !== 'core') assert.equal(packed.dependencies['@drawink/core'], '^0.1.1')
+  if (folder !== 'core') assert.equal(packed.dependencies['@drawink/core'], coreRange)
   const esm = await import(pathToFileURL(resolve(cwd, 'dist/index.js')))
   const cjs = createRequire(resolve(cwd, 'package.json'))(resolve(cwd, 'dist/index.cjs'))
   assert.equal(typeof esm.Drawboard, folder === 'core' ? 'function' : 'object')
